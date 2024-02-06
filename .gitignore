@@ -396,3 +396,5 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+/.vs/StravaDataCollection/DesignTimeBuild/.dtbcache.v2
+/.vs/StravaDataCollection/v17/.suo

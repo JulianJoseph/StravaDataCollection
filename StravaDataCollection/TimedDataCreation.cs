@@ -10,16 +10,16 @@ namespace StravaDataCollection
 {
     public class TimedDataCreation
     {
-        private static ILogger<TimedDataCreation> _logger;
+        private readonly ILogger<TimedDataCreation> _logger;
 
-        public TimedDataCreation(ILoggerFactory loggerFactory)
+        public TimedDataCreation(ILogger<TimedDataCreation> logger)
         {
-            _logger = loggerFactory.CreateLogger<TimedDataCreation>();
+            _logger = logger;
         }
 
 
         [Function("TimedDataCreation")]
-        public static async Task Run([TimerTrigger("*/30 * * * * *")] TimerInfo myTimer, ILogger logger)
+        public async Task Run([TimerTrigger("*/20 * * * * *")] TimerInfo myTimer)
         {
             // Get the connection string from app settings and use it to create a connection.
             var str = Environment.GetEnvironmentVariable("sqldb_connection");
@@ -36,9 +36,19 @@ namespace StravaDataCollection
                 using (SqlCommand cmd = new SqlCommand(text, conn))
                 {
                     // Execute the command and log the # rows affected.
-                    var rows = await cmd.ExecuteNonQueryAsync();
-                    logger.LogInformation($"{rows.ToString()} rows were inserted");
-                    //Console.WriteLine($"{rows.ToString()} rows were inserted");
+                    try
+                    {
+                        var rows = await cmd.ExecuteNonQueryAsync();
+                        _logger.LogInformation($"{rows.ToString()} rows were inserted");
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "An error occurrred");
+                    }
+                    finally
+                    {
+                        _logger.LogInformation("Complete");
+                    }
                 }
             }
         }
