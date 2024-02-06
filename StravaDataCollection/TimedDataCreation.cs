@@ -19,7 +19,7 @@ namespace StravaDataCollection
 
 
         [Function("TimedDataCreation")]
-        public async Task Run([TimerTrigger("*/20 * * * * *")] TimerInfo myTimer)
+        public async Task Run([TimerTrigger("0 0 * * * *")] TimerInfo myTimer)
         {
             // Get the connection string from app settings and use it to create a connection.
             var str = Environment.GetEnvironmentVariable("sqldb_connection");
